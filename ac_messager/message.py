@@ -2,16 +2,12 @@
 # -*- coding: utf8 -*-
 import json
 from enum import Enum
-import logging
 
 import requests
 
 __author__ = "enginebai"
 
-URL_BASE = "https://graph.facebook.com/v2.9/"
-logger = logging.getLogger(__name__)
-logger.addHandler(logging.NullHandler())
-
+URL_BASE = "https://graph.facebook.com/v2.12/"
 # send message fields
 RECIPIENT_FIELD = "recipient"
 MESSAGE_FIELD = "message"
@@ -117,7 +113,6 @@ class QuickReply:
             reply_dict[TITLE_FIELD] = self.title
         if self.image_url:
             reply_dict[IMAGE_FIELD] = self.image_url
-        logger.debug(reply_dict)
         return reply_dict
 
 
@@ -146,63 +141,68 @@ class Messager(object):
                              data=json.dumps(data))
 
     def send_text(self, user_id, text):
-        return self._send({RECIPIENT_FIELD: self._build_recipient(user_id),
-                    MESSAGE_FIELD: {MessageType.TEXT.value: text}})
+        return self._send({
+            RECIPIENT_FIELD: self._build_recipient(user_id),
+            MESSAGE_FIELD: {MessageType.TEXT.value: text}})
 
     def send_image(self, user_id, image):
-        return self._send({RECIPIENT_FIELD: self._build_recipient(user_id),
-                    MESSAGE_FIELD: {
-                        ATTACHMENT_FIELD: {
-                            TYPE_FIELD: AttachmentType.IMAGE.value,
-                            PAYLOAD_FIELD: {
-                                URL_FIELD: image
-                            }
-                        }
-                    }})
+        return self._send({
+            RECIPIENT_FIELD: self._build_recipient(user_id),
+            MESSAGE_FIELD: {
+                ATTACHMENT_FIELD: {
+                    TYPE_FIELD: AttachmentType.IMAGE.value,
+                    PAYLOAD_FIELD: {
+                        URL_FIELD: image
+                    }
+                }
+            }})
 
     def send_buttons(self, user_id, title, button_list):
         buttons = [button.to_dict() for button in button_list]
-        return self._send({RECIPIENT_FIELD: self._build_recipient(user_id),
-                    MESSAGE_FIELD: {
-                        ATTACHMENT_FIELD: {
-                            TYPE_FIELD: AttachmentType.TEMPLATE.value,
-                            PAYLOAD_FIELD: {
-                                TEMPLATE_TYPE_FIELD: TemplateType.BUTTON.value,
-                                TEXT_FIELD: title,
-                                BUTTONS_FIELD: buttons
-                            }
-                        }
-                    }})
+        return self._send({
+            RECIPIENT_FIELD: self._build_recipient(user_id),
+            MESSAGE_FIELD: {
+                ATTACHMENT_FIELD: {
+                    TYPE_FIELD: AttachmentType.TEMPLATE.value,
+                    PAYLOAD_FIELD: {
+                        TEMPLATE_TYPE_FIELD: TemplateType.BUTTON.value,
+                        TEXT_FIELD: title,
+                        BUTTONS_FIELD: buttons
+                    }
+                }
+            }})
 
     def send_generic(self, user_id, element_list):
         elements = [element.to_dict() for element in element_list]
-        return self._send({RECIPIENT_FIELD: self._build_recipient(user_id),
-                    MESSAGE_FIELD: {
-                        ATTACHMENT_FIELD: {
-                            TYPE_FIELD: AttachmentType.TEMPLATE.value,
-                            PAYLOAD_FIELD: {
-                                TEMPLATE_TYPE_FIELD:
-                                    TemplateType.GENERIC.value,
-                                ELEMENTS_FIELD: elements
-                            }
-                        }
-                    }})
+        return self._send({
+            RECIPIENT_FIELD: self._build_recipient(user_id),
+            MESSAGE_FIELD: {
+                ATTACHMENT_FIELD: {
+                    TYPE_FIELD: AttachmentType.TEMPLATE.value,
+                    PAYLOAD_FIELD: {
+                        TEMPLATE_TYPE_FIELD:
+                            TemplateType.GENERIC.value,
+                        ELEMENTS_FIELD: elements
+                    }
+                }
+            }})
 
     def send_quick_replies(self, user_id, title, reply_list):
         replies = list(dict())
         for r in reply_list:
             replies.append(r.to_dict())
-        return self._send({RECIPIENT_FIELD: self._build_recipient(user_id),
-                    MESSAGE_FIELD: {
-                        TEXT_FIELD: title,
-                        QUICK_REPLIES_FIELD: replies
-                    }})
+        return self._send({
+            RECIPIENT_FIELD: self._build_recipient(user_id),
+            MESSAGE_FIELD: {
+                TEXT_FIELD: title,
+                QUICK_REPLIES_FIELD: replies
+            }})
 
     def typing(self, user_id, on=True):
         sender_action = "typing_on" if on else "typing_off"
         data = {RECIPIENT_FIELD: {"id": user_id},
                 "sender_action": sender_action}
-        fmt = URL_BASE + "messages?access_token={token}"
+        fmt = URL_BASE + "message?access_token={token}"
         return requests.post(fmt.format(token=self.access_token),
                              headers={"Content-Type": "application/json"},
                              data=json.dumps(data))
@@ -215,14 +215,6 @@ class Messager(object):
         post_message_url = URL_BASE + "messages?access_token={token}".format(
             token=self.access_token)
         response_message = json.dumps(message_data)
-        logger.debug(response_message)
-        req = requests.post(post_message_url,
-                            headers={"Content-Type": "application/json"},
-                            data=response_message)
-        fmt = "[{status}/{reason}/{text}] Reply to {recipient}: {content}"
-        logger.debug(fmt.format(status=req.status_code,
-                                reason=req.reason,
-                                text=req.text,
-                                recipient=message_data[RECIPIENT_FIELD],
-                                content=message_data[MESSAGE_FIELD]))
-        return req
+        return requests.post(
+            post_message_url, headers={"Content-Type": "application/json"},
+            data=response_message)
