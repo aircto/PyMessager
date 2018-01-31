@@ -4,17 +4,20 @@
 from setuptools import setup
 
 __author__ = "Engine Bai"
+__maintainer__ = "dhilipsiva"
 
 setup(
-    name="PyMessager",
-    version="1.0.1",
-    packages=["pymessager", ],
+    name="ac-messager",
+    version="1.0.1.1",
+    packages=["ac_pymessager", ],
     license='The MIT License (MIT) Copyright © 2017 Engine Bai.',
-    description="A Python SDK and Flask API to develop Facebook Messenger application",
+    description="A Python Facebook Messenger library",
     long_description=open("README", "r").read(),
     author="Engine Bai",
     author_email="enginebai@gmail.com",
-    url="https://github.com/enginebai/PyMessager",
+    maintainer='dhilipsiva',
+    maintainer_email='dhilipsiva@gmail.com',
+    url="https://github.com/aircto/ac-messager",
     install_requires=[
         "requests"
     ],
