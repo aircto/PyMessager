@@ -7,7 +7,7 @@ import requests
 
 __author__ = "enginebai"
 
-URL_BASE = "https://graph.facebook.com/v2.12/"
+URL_BASE = "https://graph.facebook.com/v2.12/me/"
 # send message fields
 RECIPIENT_FIELD = "recipient"
 MESSAGE_FIELD = "message"
@@ -202,7 +202,7 @@ class Messager(object):
         sender_action = "typing_on" if on else "typing_off"
         data = {RECIPIENT_FIELD: {"id": user_id},
                 "sender_action": sender_action}
-        fmt = URL_BASE + "message?access_token={token}"
+        fmt = URL_BASE + "messages?access_token={token}"
         return requests.post(fmt.format(token=self.access_token),
                              headers={"Content-Type": "application/json"},
                              data=json.dumps(data))
