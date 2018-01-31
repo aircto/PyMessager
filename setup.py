@@ -9,10 +9,9 @@ __maintainer__ = "dhilipsiva"
 setup(
     name="ac-messager",
     version="1.0.1.1",
-    packages=["ac_pymessager", ],
+    packages=["ac_messager", ],
     license='The MIT License (MIT) Copyright © 2017 Engine Bai.',
     description="A Python Facebook Messenger library",
-    long_description=open("README", "r").read(),
     author="Engine Bai",
     author_email="enginebai@gmail.com",
     maintainer='dhilipsiva',
