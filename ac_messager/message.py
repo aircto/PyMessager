@@ -146,11 +146,11 @@ class Messager(object):
                              data=json.dumps(data))
 
     def send_text(self, user_id, text):
-        self._send({RECIPIENT_FIELD: self._build_recipient(user_id),
+        return self._send({RECIPIENT_FIELD: self._build_recipient(user_id),
                     MESSAGE_FIELD: {MessageType.TEXT.value: text}})
 
     def send_image(self, user_id, image):
-        self._send({RECIPIENT_FIELD: self._build_recipient(user_id),
+        return self._send({RECIPIENT_FIELD: self._build_recipient(user_id),
                     MESSAGE_FIELD: {
                         ATTACHMENT_FIELD: {
                             TYPE_FIELD: AttachmentType.IMAGE.value,
@@ -162,7 +162,7 @@ class Messager(object):
 
     def send_buttons(self, user_id, title, button_list):
         buttons = [button.to_dict() for button in button_list]
-        self._send({RECIPIENT_FIELD: self._build_recipient(user_id),
+        return self._send({RECIPIENT_FIELD: self._build_recipient(user_id),
                     MESSAGE_FIELD: {
                         ATTACHMENT_FIELD: {
                             TYPE_FIELD: AttachmentType.TEMPLATE.value,
@@ -176,7 +176,7 @@ class Messager(object):
 
     def send_generic(self, user_id, element_list):
         elements = [element.to_dict() for element in element_list]
-        self._send({RECIPIENT_FIELD: self._build_recipient(user_id),
+        return self._send({RECIPIENT_FIELD: self._build_recipient(user_id),
                     MESSAGE_FIELD: {
                         ATTACHMENT_FIELD: {
                             TYPE_FIELD: AttachmentType.TEMPLATE.value,
@@ -192,7 +192,7 @@ class Messager(object):
         replies = list(dict())
         for r in reply_list:
             replies.append(r.to_dict())
-        self._send({RECIPIENT_FIELD: self._build_recipient(user_id),
+        return self._send({RECIPIENT_FIELD: self._build_recipient(user_id),
                     MESSAGE_FIELD: {
                         TEXT_FIELD: title,
                         QUICK_REPLIES_FIELD: replies
@@ -225,3 +225,4 @@ class Messager(object):
                                 text=req.text,
                                 recipient=message_data[RECIPIENT_FIELD],
                                 content=message_data[MESSAGE_FIELD]))
+        return req
