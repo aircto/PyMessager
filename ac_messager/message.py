@@ -75,6 +75,8 @@ class ActionButton:
             button_dict[URL_FIELD] = self.url
         if self.payload:
             button_dict[PAYLOAD_FIELD] = self.payload
+        button_dict["webview_height_ratio"] = "tall"
+        button_dict["messenger_extensions"] = True
         return button_dict
 
 
